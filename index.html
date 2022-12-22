@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link href="/static/style.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="navbar">
+        <a class="navbar_item text" href="/index.html"> Home </a>
+        <a class="navbar_item text" href="/index.html?blog=about.md"> About </a>
+        <a class="navbar_item text" href="/search.html"> Search </a>
+        <a class="navbar_item text" href="/resume.pdf"> Resume </a>
+    </div>
+    <div class="main main_screen">
+        <div class="header">
+            <div class="header_left">
+            
+                <div class="introduction_text text">
+                    <h1>Hello.</h1>
+                    <h2>My name's Dmitri Shevchenko, and Im a CS undergrad at the University of Technology, Sydney.</h2>
+                    <h3>Here are some of the things Im working on...</h3>
+                </div>
+
+                <div class="icon_set">
+                    <img src="/static/github.svg" class="icon" onclick="window.open('https://github.com/')" />
+                    <img src="/static/instagram.svg" class="icon" onclick="window.open('https://www.instagram.com/')" />
+                    <img src="/static/mailbox.svg" class="icon" onclick="window.open('mailto:')" />
+                    <img src="/static/linkedin.svg" class="icon" onclick="window.open('https://www.linkedin.com/in/')" />
+                    <img src="/static/twitter.svg" class="icon" onclick="window.open('https://twitter.com/')" />
+                </div>
+            </div>
+            <div class="profile_wrapper">
+                <img class="profile_pic" src="/static/me.jpg">
+            </div>
+        </div>
+        <div class="master_blog blog text">
+            <div class="blog_content"></div>
+        </div>
+
+        <div class="blogs">    
+        </div>
+    </div>
+
+    <div class="main blog_viewer_screen hidden">
+        <div class="blog_wrapper text">
+            
+        </div>
+    </div>
+
+    <script src="/static/marked.min.js"></script>
+    <script src="/static/vanilla-tilt.min.js"></script>
+</body>
+</html>
+<script >
+var server = "";
+var blogs_element = document.getElementsByClassName("blogs")[0];
+let params = (new URL(document.location)).searchParams;
+
+if (params.has("blog")) {
+    var index = params.get("blog");
+    load_one_blog(index);
+} else {
+    load_all_blogs();
+}
+
+function load_all_blogs() {
+    document.getElementsByClassName("main_screen")[0].classList.remove("hidden");
+    document.getElementsByClassName("blog_viewer_screen")[0].classList.add("hidden");
+
+    fetch('/posts.json')
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(blog => {
+            fetch('/posts/' + blog.src)
+                .then(response => response.text())
+                .then(data => {
+                    add_blog(data, blog.src);
+                });
+        });
+    });
+}
+
+function load_one_blog(src) {
+    document.getElementsByClassName("main_screen")[0].classList.add("hidden");
+    document.getElementsByClassName("blog_viewer_screen")[0].classList.remove("hidden");
+
+    fetch('/posts/' + src)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementsByClassName("blog_wrapper")[0].innerHTML = marked.parse(data);
+        });
+}
+
+function add_blog(blog_markdown, src) {
+    // Create master blog clone
+    var master_blog = document.getElementsByClassName("master_blog")[0].cloneNode(true);
+    
+    // Remove master blog class
+    master_blog.classList.remove("master_blog");
+
+    // For each blog, create a blog clone
+    var blog = master_blog.cloneNode(true);
+    
+    // Adding the content
+    blog.getElementsByClassName("blog_content")[0].innerHTML = marked.parse(blog_markdown);
+    
+    // Adding the onclick event for the blog
+    blog.onclick = function() {
+        window.location.href = "/index.html?blog=" + src;
+    }
+
+    // Change max width to create offset grid
+    if (Math.random() < 0.5) {
+        blog.style.maxWidth = (500 - (Math.random() * 200)) + "px";
+    }
+        
+    blogs_element.appendChild(blog);
+
+    // Add tilt effect
+    VanillaTilt.init(blog, {
+        max: 5,
+        speed: 400,
+        glare: true,
+        "max-glare": 0.1
+    });
+}
+
+
+</script>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <!--<link href="{{ url_for('static', path='/style.css') }}" rel="stylesheet">-->
+    <link href="../static/style.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="navbar">
+        <a class="navbar_item text" href="/index.html"> Home </a>
+        <a class="navbar_item text" href="/index.html?blog=about.md"> About </a>
+        <a class="navbar_item text" href="/search.html"> Search </a>
+        <a class="navbar_item text" href="/resume.pdf"> Resume </a>
+    </div>
+    <div class="main">
+        <div class="search_box">
+            <input type="text" id="search_input" placeholder="Search">
+        </div>
+
+        <div class="master_blog blog text">
+            <div class="blog_content"></div>
+        </div>
+
+        <div class="blogs">
+            
+        </div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../static/vanilla-tilt.min.js"></script>
+</body>
+</html>
+<script>
+
+var server = "";
+var blogs = [];
+var blogs_element = document.getElementsByClassName("blogs")[0];
+
+fetch('/posts.json')
+    .then(response => response.json())
+    .then(data => {
+        blogs = data;
+    });
+
+var search_timeout;
+document.getElementById("search_input").addEventListener("keyup", function() {
+    clearTimeout(search_timeout);
+    search_timeout = setTimeout(search, 1000);
+});
+
+document.getElementById("search_input").addEventListener("keydown", function(event) {
+    if (event.keyCode == 13) {
+        search();
+    }
+});
+
+function search() {
+    // play search_box_animation here
+    document.getElementsByClassName("search_box")[0].classList.add("search_box_animation");
+
+    var search_input = document.getElementById("search_input").value;
+    if (search_input == "") {
+        document.getElementsByClassName("blogs")[0].innerHTML = "";
+        return;
+    }
+
+    var search_results = [];
+    
+    blogs.forEach(blog => {
+        if (blog.title.toLowerCase().includes(search_input.toLowerCase())) {
+            search_results.push(blog);
+        }
+
+        if (blog.tags) {
+            blog.tags.forEach(tag => {
+                if (tag.toLowerCase().includes(search_input.toLowerCase())) {
+                    search_results.push(blog);
+                }
+            });
+        }
+
+    });
+
+    document.getElementsByClassName("blogs")[0].innerHTML = "";
+    search_results.forEach(blog => {
+        fetch('/posts/' + blog.src)
+            .then(response => response.text())
+            .then(data => {
+                add_blog(data, blog.src);
+            });
+    });
+
+}
+
+function add_blog(blog_markdown, src) {
+    // Create master blog clone
+    var master_blog = document.getElementsByClassName("master_blog")[0].cloneNode(true);
+    
+    // Remove master blog class
+    master_blog.classList.remove("master_blog");
+
+    // For each blog, create a blog clone
+    var blog = master_blog.cloneNode(true);
+    
+    // Adding the content
+    blog.getElementsByClassName("blog_content")[0].innerHTML = marked.parse(blog_markdown);
+    
+    // Adding the onclick event for the blog
+    blog.onclick = function() {
+        window.location.href = "/index.html?blog=" + src;
+    }
+
+    // Change max width to create offset grid
+    if (Math.random() < 0.5) {
+        blog.style.maxWidth = (500 - (Math.random() * 200)) + "px";
+    }
+        
+    blogs_element.appendChild(blog);
+
+    // Add tilt effect
+    VanillaTilt.init(blog, {
+        max: 5,
+        speed: 400,
+        glare: true,
+        "max-glare": 0.1
+    });
+}
+
+</script>
