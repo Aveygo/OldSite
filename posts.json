@@ -4,5 +4,11 @@
         "tags": ["test", "first"],
         "src": "1.md",
         "posted": "2022-11-29"
+    },
+    {
+        "title": "Lite Crypto",
+        "tags": ["crypto", "cryptography", "pi"],
+        "src": "lite_crypto.md",
+        "posted": "2022-12-29"
     }
 ]
