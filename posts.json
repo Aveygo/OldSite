@@ -10,5 +10,11 @@
         "tags": ["crypto", "cryptography", "pi"],
         "src": "lite_crypto.md",
         "posted": "2022-12-29"
+    },
+    {
+        "title": "Deterministic Ecdsa",
+        "tags": ["crypto", "cryptography", "pi", "ecdsa", "web"],
+        "src": "deterministic_web_ecdsa.md",
+        "posted": "2022-12-29"
     }
 ]
