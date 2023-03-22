@@ -1,12 +1,12 @@
 @font-face {
     font-family: nes;
-    src: url("nes_font.ttf");
+    src: url("fonts/nes_font.ttf");
     font-display: swap;
 }
 
 @font-face {
     font-family: roboto;
-    src: url("roboto_font.ttf");
+    src: url("fonts/roboto_font.ttf");
     font-display: swap;
 }
 
