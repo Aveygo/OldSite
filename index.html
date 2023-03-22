@@ -1,130 +1,157 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-    <link href="/static/style.css" rel="stylesheet">
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="style.css">
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-</head>
-<body>
-    <div class="navbar">
-        <a class="navbar_item text" href="/index.html"> Home </a>
-        <a class="navbar_item text" href="/index.html?blog=about.md"> About </a>
-        <a class="navbar_item text" href="/search.html"> Search </a>
-        <a class="navbar_item text" href="/resume.pdf"> Resume </a>
-    </div>
-    <div class="main main_screen">
-        <div class="header">
-            <div class="header_left">
-            
-                <div class="introduction_text text">
-                    <h1>Hello.</h1>
-                    <h2>My name's Dmitri Shevchenko, and Im a CS undergrad at the University of Technology, Sydney.</h2>
-                    <h3>Here are some of the things Im working on....</h3>
-                </div>
-
-                <div class="icon_set">
-                    <img src="/static/github.svg" class="icon" onclick="window.open('https://github.com/')" />
-                    <img src="/static/instagram.svg" class="icon" onclick="window.open('https://www.instagram.com/')" />
-                    <img src="/static/mailbox.svg" class="icon" onclick="window.open('mailto:')" />
-                    <img src="/static/linkedin.svg" class="icon" onclick="window.open('https://www.linkedin.com/in/')" />
-                    <img src="/static/twitter.svg" class="icon" onclick="window.open('https://twitter.com/')" />
-                </div>
-            </div>
-            <div class="profile_wrapper">
-                <img class="profile_pic" src="/static/giphy.gif">
-            </div>
-        </div>
-        <div class="master_blog blog text">
-            <div class="blog_content"></div>
-        </div>
-
-        <div class="blogs">    
-        </div>
-    </div>
-
-    <div class="main blog_viewer_screen hidden">
-        <div class="blog_wrapper text">
-            
-        </div>
-    </div>
-
-    <script src="/static/marked.min.js"></script>
-    <script src="/static/vanilla-tilt.min.js"></script>
-</body>
-</html>
-<script >
-var server = "";
-var blogs_element = document.getElementsByClassName("blogs")[0];
-let params = (new URL(document.location)).searchParams;
-
-if (params.has("blog")) {
-    var index = params.get("blog");
-    load_one_blog(index);
-} else {
-    load_all_blogs();
-}
-
-function load_all_blogs() {
-    document.getElementsByClassName("main_screen")[0].classList.remove("hidden");
-    document.getElementsByClassName("blog_viewer_screen")[0].classList.add("hidden");
-
-    fetch('/posts.json')
-    .then(response => response.json())
-    .then(data => {
-        data.forEach(blog => {
-            fetch('/posts/' + blog.src)
-                .then(response => response.text())
-                .then(data => {
-                    add_blog(data, blog.src);
-                });
-        });
-    });
-}
-
-function load_one_blog(src) {
-    document.getElementsByClassName("main_screen")[0].classList.add("hidden");
-    document.getElementsByClassName("blog_viewer_screen")[0].classList.remove("hidden");
-
-    fetch('/posts/' + src)
-        .then(response => response.text())
-        .then(data => {
-            document.getElementsByClassName("blog_wrapper")[0].innerHTML = marked.parse(data);
-        });
-}
-
-function add_blog(blog_markdown, src) {
-    // Create master blog clone
-    var master_blog = document.getElementsByClassName("master_blog")[0].cloneNode(true);
-    
-    // Remove master blog class
-    master_blog.classList.remove("master_blog");
-
-    // For each blog, create a blog clone
-    var blog = master_blog.cloneNode(true);
-    
-    // Adding the content
-    blog.getElementsByClassName("blog_content")[0].innerHTML = marked.parse(blog_markdown);
-    
-    // Adding the onclick event for the blog
-    blog.onclick = function() {
-        window.location.href = "/index.html?blog=" + src;
-    }
-
-    // Change max width to create offset grid
-    if (Math.random() < 0.5) {
-        blog.style.maxWidth = (500 - (Math.random() * 200)) + "px";
-    }
+        <title>Dmitri Shevchenko</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <meta name=description content="Web Assembly Assignment">
         
-    blogs_element.appendChild(blog);
 
-    // Add tilt effect
-    VanillaTilt.init(blog, {
-        max: 5,
-        speed: 400,
-        glare: true,
-        "max-glare": 0.1
-    });
-}
+        <link rel="preload" href="nes_font.ttf" as="font" crossorigin="anonymous" />
+        <link rel="preload" href="roboto_font.ttf" as="font" crossorigin="anonymous" />
+    </head>
+    <body>
+        <div id="rain"></div>
 
+        <div id="wrapper">
+            <p class="main_logo selectable">
+                <a href="index.html">Home</a>
+            </p>
+        
+            <div class="tile glow_box">
+                <h1>
+                    About
+                </h1>
+                <div class="content">
+                    <p>
+                        My name is Dmitri Shevchenko and I'm a CS undergrad at the University of Technology, Sydney.
+                        I spend my days coding and my nights dreaming about algorithms (just kidding... or am I?).
+                    </p>
+                    <p>
+                        One of my favorite personal projects is a <a class="selectable" href="https://semanticnews.dedyn.io:8080/">website</a> that I built from scratch.
+                        It collects news articles and uses bert encodings and k-means to identify clusters (eg headlines).
+                        I'm also currently working on a top-secret project that involves machine learning and lots of coffee.
+                    </p>
+                    <br>
+                    <p>
+                        Aside from coding, I'm into all sorts of geeky stuff.
+                        I'm a gamer (shoutout to all my fellow csgo TrashRats!), and love following along r/wallstreetbets and their awful DDs.
+                    </p>
+                </div>
+                
+            </div>
+            <div class="tile small_tile glow_box">
+                <h1>
+                    Nav
+                </h1>
+                <ul>
+                    <li class="selectable nav_text"><a href="index.html"> > Home</a></li>
+                    <li class="selectable nav_text"><a href="past.html"> > Past</a></li>
+                    <li class="selectable nav_text"><a href="future.html"> > Future</a></li>
+                    <li class="selectable nav_text"><a href="comments.html"> > Comments</a></li> 
+                </ul>
+                
+            </div>
+            
+            <div class="tile small_tile glow_box">
+                <h1>
+                    Crypto
+                </h1>
+                <pre class="qrcode">                                         
+▄▄▄▄▄▄▄  ▄   ▄▄▄▄  ▄▄ ▄▄▄▄▄▄▄  
+█ ▄▄▄ █ ▀█▄█▀  ▀█ ▄ ▀ █ ▄▄▄ █  
+█ ███ █ ▀▀▄▀▄▀▀▀▄▀▄▄▄ █ ███ █  
+█▄▄▄▄▄█ █ █ ▄▀▄▀█▀█ █ █▄▄▄▄▄█  
+▄▄▄▄▄ ▄▄▄▄▄ █ █▄█▄ ▀█▄ ▄ ▄ ▄   
+▀▀ ▄ █▄█▀█ ▄▄ ▀██▀█▀█ ▀▀█   ▀  
+█▄ ▄▄▀▄███▀█  ▀▀▄▄██▀  █▀█▄▀   
+▀▀▀  ▄▀▄▀█ ▀█▄▄▄█ ▀▄█▀██▄▄ ▀  
+▀█▄▀▄▄▄ ██▄ █▀▄▄█▄ ▄▀▀▀█▀▄▄▀   
+█ █ █ ▄▄▄ ▄▄▄  ▄▀▄ ▀█▀▀█▀ █ ▀  
+█ ███▄▄█ ▄▄█  ▀██▄███▄▄█▄ ▄█▄  
+▄▄▄▄▄▄▄ █ ▄ ▀██▄▄▀ ▄█ ▄ ███▀▀  
+█ ▄▄▄ █ ▄▄▀ █▀▄▄█▄ ▀█▄▄▄█ ▄ ▀  
+█ ███ █ ██▀▄▄  ▄█ ▀▀▀█▄▄▄███▀  
+█▄▄▄▄▄█ █▄ █  ▀█▄ ▀▄▀▄█▀▀█▄▀   
+                </pre>
 
-</script>
+            </div>
+            <div class="tile glow_box">
+                <h1>
+                    GITHUB
+                </h1>
+                <h2>
+                    Check out my stuff!
+                </h2>
+                <div class="centered">
+
+                    <table>
+                        <tr><td class="selectable"><a href="https://github.com/Aveygo/WordsAreWorth16x16Pixels" target="_blank">Words Are 16x16 Pixels</a></td><td class="glow_text">[ 3 stars ]</td></tr>
+                        <tr><td class="selectable"><a href="https://github.com/Aveygo/DeterministicECDSA" target="_blank">Deterministic ECDSA</a></td><td class="glow_text">[ 1 stars ]</td></tr>
+                        <tr><td class="selectable"><a href="https://github.com/Aveygo/SemanticNews" target="_blank">Semantic News</a></td><td class="glow_text">[ 1 stars ]</td></tr>
+                        <tr><td class="selectable"><a href="https://github.com/Aveygo/JokeNumber" target="_blank">Joke Number</a></td><td class="glow_text">[ 1 stars ]</td></tr>
+                        <tr><td class="selectable"><a href="https://github.com/Aveygo/JsNewHope" target="_blank">JsNewHope</a></td><td class="glow_text">[ 1 stars ]</td></tr>
+                        <tr><td class="selectable"><a href="https://github.com/Aveygo/PyOSMRenderer" target="_blank">PyOSMRenderer</a></td><td class="glow_text">[ 1 stars ]</td></tr>
+                        <tr><td class="selectable"><a href="https://github.com/Aveygo/SocTacToe" target="_blank">SocTacToe</a></td><td class="glow_text">[ 1 stars ]</td></tr>
+                    </table>
+                    
+                </div>
+
+            </div>
+            <div class="tile glow_box">
+                <h1>
+                    News
+                </h1>
+                <h2>
+                    Latest headlines
+                </h2>
+                <ul id="news">
+                    <li class="selectable" id="news_tmp">Failed to fetch!</li>
+                </ul>
+                
+            </div>
+            <div class="tile glow_box">
+                <h1>
+                    Markets
+                </h1>
+                <h2>
+                    Weekly changes
+                </h2>
+                <div class="centered">
+                    <table>
+                        <tr><td>BTC</td><td class="glow_text" id="BTC_price">WAIT</td></tr>
+                        <tr><td>ETH</td><td class="glow_text" id="ETH_price">WAIT</td></tr>
+                        <tr><td>5YUS</td><td class="glow_text" id="5YUS_price">WAIT</td></tr>
+                        <tr><td>2YUS</td><td class="glow_text" id="2YUS_price">WAIT</td></tr>
+                    </table>
+                    <table>
+                        <tr><td>SPX500</td><td class="glow_text" id="SPX500_price">WAIT</td></tr>
+                        <tr><td>DOWJNS</td><td class="glow_text" id="DOWJNS_price">WAIT</td></tr>
+                        <tr><td>NSDQ100</td><td class="glow_text" id="NSDQ100_price">WAIT</td></tr>
+                        <tr><td>AUS200</td><td class="glow_text" id="AUS200_price">WAIT</td></tr>
+                    </table>
+                    <table>
+                        <tr><td>GOLD</td><td class="glow_text" id="GOLD_price">WAIT</td></tr>
+                        <tr><td>SLV</td><td class="glow_text" id="SLV_price">WAIT</td></tr>
+                        <tr><td>OIL</td><td class="glow_text" id="OIL_price">WAIT</td></tr>
+                        <tr><td>GAS</td><td class="glow_text" id="GAS_price">WAIT</td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="tile glow_blox footer centered">
+                <p>&copy; 2023 Dmitri Shevchenko. All Rights Reserved.</p>
+            </div>
+
+        </div>
+    
+        <script src="main.js"></script>
+        <script src="fetchables.js"></script>
+
+        <div class="background"></div>
+        
+    </body>
+</html>
