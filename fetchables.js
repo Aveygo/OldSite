@@ -47,8 +47,9 @@ async function get_news() {
 
     for (var i = 0; i < json.data.children.length; i++) {
         results.data[json.data.children[i].data.title] = json.data.children[i].data.url;
-        console.log("Found: " + json.data.children[i].data.title + " " + json.data.children[i].data.url);
     }
+
+    console.log("News loaded from reddit");
 
     // Saving news to local storage
     localStorage.setItem("news", JSON.stringify(results));
@@ -69,8 +70,6 @@ async function show_news() {
     news_tmp.innerHTML = "";
 
     for (var i = 0; i < headlines.length; i++) {
-
-        console.log("Showing: " + headlines[i])
 
         // Creating news element
         var news_element = document.createElement("li");
@@ -122,7 +121,6 @@ async function load_prices() {
         if (instruments_ids.includes(json[i].InstrumentId.toString())) {
 
             var change = ( json[i].OfficialClosingPrice - json[i].ClosingPrices.Weekly.Price ) / json[i].ClosingPrices.Weekly.Price;
-            console.log("Found: " + instruments[json[i].InstrumentId] + "(" + json[i].InstrumentId + ") " + change + "%" + " Current:" + json[i].OfficialClosingPrice + " Weekly:" + json[i].ClosingPrices.Weekly.Price);
 
             if (change == 0) {
                 // ¯\_(ツ)_/¯
@@ -133,6 +131,8 @@ async function load_prices() {
         }
 
     }
+
+    console.log("Prices loaded from etoro");
 
     // Save to local storage
     localStorage.setItem("prices", JSON.stringify(results));
@@ -166,8 +166,6 @@ async function show_prices() {
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
         var value = prices.data[key];
-
-        console.log("Showing price: " + key + " " + value);
 
         // Set direction sign
         if (value > 0) {

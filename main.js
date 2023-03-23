@@ -9,10 +9,13 @@ function draw_rain() {
 
     if (/Mobi|Android/i.test(navigator.userAgent)) {
         rain_amount *= 0.1;
+        console.log("Mobile detected, spawned only " + rain_amount + " drops");
     } else if (window.innerWidth < 500) {
         rain_amount *= 0.1;
+        console.log("Very small screen detected, spawned only " + rain_amount + " drops");
     } else if (window.innerWidth < 800) {
         rain_amount *= 0.5;
+        console.log("Small screen detected, spawned only " + rain_amount + " drops");
     }
 
     for (let i = 0; i < rain_amount; i++) {
