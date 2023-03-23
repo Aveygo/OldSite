@@ -44,7 +44,7 @@ body {
     margin:0px;
     padding:0px;
     width:100%;
-    min-width: 430px;
+    min-width: 300px;
 
     display: flex;
     flex-direction: column;
