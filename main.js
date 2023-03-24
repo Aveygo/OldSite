@@ -73,12 +73,31 @@ function setup_easter_egg() {
     }
 }
 
+function setup_super_unsafe_css() {
+    // sets image-rendering to pixelated after page load
+    window.addEventListener('load', function () {
+        document.getElementsByClassName("background")[0].style.imageRendering = "pixelated";
+        /*
+        var tiles = document.getElementsByClassName("tile");
+        for (var i = 0; i < tiles.length; i++) {
+            tiles[i].style.minWidth = "min(100%, 600px)";
+        }
+        var small_tiles = document.getElementsByClassName("small_tile");
+        for (var i = 0; i < small_tiles.length; i++) {
+            small_tiles[i].style.minWidth = "min(100%, 200px)";
+        }
+        */
+
+    });
+}
+
 async function main() {
     if (!isReduced) {
         draw_rain();
         setup_parallax();
         setup_easter_egg();
     }
+    setup_super_unsafe_css();
 }
 
 main()
