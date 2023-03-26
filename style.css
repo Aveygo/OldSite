@@ -82,13 +82,6 @@ body {
     min-height: 200px;
     
     opacity: 0.8;
-    overflow: hidden;
-
-    background: radial-gradient(
-        70em circle at var(--mouse-x) var(--mouse-y), 
-        rgba(50, 255, 150, 1),
-        transparent 40%
-    );
     
     border-radius: 10px;
     padding-bottom: 20px;
@@ -104,11 +97,12 @@ body {
     
     height: calc(100% - 2px);
     width: calc(100% - 2px);
+    margin-left: 1px;
+    margin-top: 1px;
 
     position: absolute;
     transition: opacity 500ms;
 
-    inset: 1px;
     background-image: 
         radial-gradient(rgba(50, 255, 150, 0.1) 1px, transparent 0%),
         radial-gradient(rgba(50, 255, 150, 0.1) 1px, transparent 0%);
@@ -326,9 +320,10 @@ th, td {
 
 .centered {
     width: 100%;
+    margin-top: 10px;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
     align-content: stretch;
     text-align: center;
 }

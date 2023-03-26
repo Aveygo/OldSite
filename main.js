@@ -78,8 +78,8 @@ function setup_tile_borders() {
                 let rect = tile.getBoundingClientRect()
                 let x = e.clientX - rect.left
                 let y = e.clientY - rect.top;
-                tile.style.setProperty("--mouse-x", `${x}px`);
-                tile.style.setProperty("--mouse-y", `${y}px`);
+
+               tile.style.background = "radial-gradient(70em circle at " + x + "px " + y + "px, rgba(50, 255, 150, 1), transparent 40%)";
             };
         }
     });
@@ -87,8 +87,7 @@ function setup_tile_borders() {
     document.addEventListener('mouseleave', function(e) {
         if (should_tilt) {
             for(let tile of tiles) {
-                tile.style.setProperty("--mouse-x", `${0}px`);
-                tile.style.setProperty("--mouse-y", `${-1000}em`);
+                tile.style.background = "radial-gradient(70em circle at 0px 1000em, rgba(50, 255, 150, 1), transparent 40%)";
             };
         }
     });
