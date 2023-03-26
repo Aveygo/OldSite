@@ -84,28 +84,45 @@ body {
     opacity: 0.8;
     overflow: hidden;
 
-    background-color: #101010;
-    border: 1px solid rgba(50, 255, 150, 0.5);
+    background: radial-gradient(
+        70em circle at var(--mouse-x) var(--mouse-y), 
+        rgba(50, 255, 150, 1),
+        transparent 40%
+    );
+    
     border-radius: 10px;
-
     padding-bottom: 20px;
 
+    position: relative;
+    z-index: 1;
+    transform-style: preserve-3d;
+}
+
+.tile::before {
+    border-radius: inherit;
+    content: "";
+    
+    height: calc(100% - 2px);
+    width: calc(100% - 2px);
+
+    position: absolute;
+    transition: opacity 500ms;
+
+    inset: 1px;
     background-image: 
         radial-gradient(rgba(50, 255, 150, 0.1) 1px, transparent 0%),
         radial-gradient(rgba(50, 255, 150, 0.1) 1px, transparent 0%);
     background-position: 1px 1px, 5px 5px;
     background-size: 10px 10px;
+    background-color: #121212;
+    z-index: -1;
 }
 
-.small_tile {
-    flex-basis: 200px;
-}
-
-.tile:nth-child(even) {
+.fly_in:nth-child(even) {
     animation: slide-in-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
 
-.tile:nth-child(odd) {
+.fly_in:nth-child(odd) {
     animation: slide-in-right 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
 
@@ -128,6 +145,27 @@ body {
         transform: translateX(0);
     }
 }
+
+a {
+    text-decoration: inherit;
+    color: inherit;
+}
+
+.tile .content {
+    font-family: roboto;
+    font-size: 1em;
+    margin:10px;
+    padding: 10px;
+}
+
+.tile:hover {
+    opacity: 1;
+}
+
+.small_tile {
+    flex-basis: 200px;
+}
+
 
 .tile img {
     opacity: 1;
@@ -166,13 +204,10 @@ ul {
     padding: 0;
 }
 
-a {
-    text-decoration: inherit;
-    color: inherit;
-}
 
 .content a {
     color: rgba(50, 255, 150, 1);
+
 }
 
 .nav_text {
@@ -210,10 +245,6 @@ a {
     box-shadow: 0 0 1px rgba(50, 255, 150, 0.1), 0 0 1px rgba(50, 255, 150, 0.1), 0 0 1px rgba(50, 255, 150, 0.1), 0 0 1px rgba(50, 255, 150, 0.1), 0 0 40px rgba(50, 255, 150, 0.1);
 }
 
-.tile:hover {
-    opacity: 1;
-}
-
 .tile p {
     margin: auto;
     background-color: #121212
@@ -233,13 +264,6 @@ a {
     padding-top: 10px;
     padding-left:30px;
     opacity: 0.9;
-}
-
-.tile .content {
-    font-family: roboto;
-    font-size: 1em;
-    margin:10px;
-    padding: 10px;
 }
 
 .tile .bold {
@@ -310,6 +334,7 @@ th, td {
 }
 
 .caption {
+    width:90%;
     font-family: nes;
     font-size: 0.8em;
     color: rgba(50, 255, 150, 0.5);
