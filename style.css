@@ -181,11 +181,25 @@ a {
 }
 
 li {
-    font-family: nes;
-    font-size: 0.9em;
+    list-style-type: none;
     margin-bottom: 10px;
-    list-style: none;
+
+    margin-left: 25px;
+    margin-right: 25px;
+    
+    font-family: nes;
+    font-size: 15px;
     width: fit-content;
+}
+
+li::before {
+    content: '*';
+    position: absolute;
+    left: 2em;
+}
+
+li.nav_text::before {
+    content: '>';
 }
 
 .content li {
@@ -195,6 +209,7 @@ li {
 
 ul {
     margin-left: 25px;
+    margin-right: 25px;
     padding: 0;
 }
 

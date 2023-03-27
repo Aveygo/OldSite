@@ -79,7 +79,7 @@ async function show_news() {
         var link_element = document.createElement("a");
         link_element.href = results.data[headlines[i]];
         link_element.target = "_blank";
-        link_element.innerHTML = "* " + headlines[i];
+        link_element.innerHTML = headlines[i];
         
         // Appending link to news element
         news_element.appendChild(link_element);
