@@ -136,11 +136,7 @@
                 </h2>
                 <div class="content">
                     <ul>
-                        <li>
-                            <p class="bold">- .wrapper</p>
-                            Creates the left and right borders around the tiles, centers the content to allow
-                            for easier reading, and uses flexbox to wrap and stretch the tiles to fit.
-                        </li>
+                        
                         <li>
                             <p class="bold">- .tile</p>
                             The main class to arrange the content within the screen, mainly for the dithering effect
@@ -150,6 +146,11 @@
                             <p class="bold">- animation: slide-in-left/right</p>
                             Used to slide the tiles into the screen via x-transforms on load in.
                         </li>
+                        <li>
+                            <p class="bold">- .tile::before</p>
+                            Allows for border effect on mouse hover. Takes mouse position and draws a circular radial gradient
+                            at mouse position.
+                        </li>
                     </ul>
                 </div>
                 <h2>
@@ -158,8 +159,8 @@
                 <div class="content">
                     <ul>
                         <li>
-                            <p class="bold">- :root </p>
-                            For easy color changes to finetune the color pallet.
+                            <p class="bold">- html and body</p>
+                            Changed to fill screen and also for centering the main screen.
                         </li>
                         <li>
                             <p class="bold">- .main_logo</p>
@@ -185,8 +186,9 @@
                 <div class="content">
                     <ul>
                         <li>
-                            <p class="bold">- html and body</p>
-                            Changed to fill screen and remove scrollbar (doesnt work on firefox, but they have a better scroll bar so its fine) and also for centering the main screen.
+                            <p class="bold">- .wrapper</p>
+                            Creates the left and right borders around the tiles, centers the content to allow
+                            for easier reading, and uses flexbox to wrap and stretch the tiles to fit.
                         </li>
                         <li>
                             <p class="bold">- .qrcode</p>
@@ -253,7 +255,7 @@
                     </p>
                     <br>
                     <p>
-                        I also specifically had a blur filter, but quickly found bugs and low performance issues even in chrome, so that was swiftly removed.  
+                        I had a blur filter, but quickly found bugs and low performance issues even in chrome, so that was swiftly removed.  
                         Apart from that, I was worried that the NES font may be hard to read, so I switch to courier for all text heavy boxes.
                     </p>
                 </div>
@@ -348,7 +350,7 @@
             </div>
 
             
-            <div class="tile glow_blox footer fly_in">
+            <div class="tile glow_box footer fly_in">
                 <div class="centered">
                     <p>&copy; 2023 Dmitri Shevchenko. All Rights Reserved.</p>
                 </div>

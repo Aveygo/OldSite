@@ -1,16 +1,35 @@
 var rain_amount = 100;
 
-var isReduced = window.matchMedia(`(prefers-reduced-motion: reduce)`) === true || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
-var isMobile = /Mobi|Android/i.test(navigator.userAgent);
-var should_tilt = false;
+var is_reduced_motion = window.matchMedia(`(prefers-reduced-motion: reduce)`) === true || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
+var is_mobile = /Mobi|Android/i.test(navigator.userAgent);
+var css_enabled = true;
 
 var tiles = document.getElementsByClassName('tile');
 
-function draw_rain() {
-    // Rain initialization
+function calculate_rain_amount() {
+    // Rain is somwhat heavy on mobile devices, so we reduce the amount of rain drops
+    if (is_mobile) {
+        rain_amount *= 0.1;
+        console.log("Mobile detected, spawned only " + rain_amount + " drops");
+    } else if (window.innerWidth < 500) {
+        rain_amount *= 0.1;
+        console.log("Very small screen detected, spawned only " + rain_amount + " drops");
+    } else if (window.innerWidth < 800) {
+        rain_amount *= 0.5;
+        console.log("Small screen detected, spawned only " + rain_amount + " drops");
+    }
+}
 
-    for (let i = 0; i < rain_amount; i++) {
-        
+function draw_rain() {
+    // Spawn rain drop elements into screen
+    if (is_reduced_motion) {
+        console.log("Reduced motion detected, not spawning rain");
+        return;
+    }
+
+    calculate_rain_amount();
+
+    for (let i = 0; i < rain_amount; i++) {    
         // Create the element/rain drop
         rain_element = document.createElement("div");
         rain_element.className = "rain_drop";
@@ -28,38 +47,11 @@ function draw_rain() {
 function setup_parallax() {
     // Parallax effect with background
     document.body.onscroll = function myFunction() {  
-        var current_scroll = document.scrollingElement.scrollTop;
-        var target = document.getElementsByClassName("background")[0];
-        var yvalue = current_scroll * 0.8;
-        target.style.transform = "translate3d(0px, " + yvalue + "px, 0px)";
-
-    }
-}
-
-function shuffle_colors() {
-    // randomize css :root r, g, b colors
-    var r = Math.floor(Math.random() * 255);
-    var g = Math.floor(Math.random() * 255);
-    var b = Math.floor(Math.random() * 255);
-
-    document.documentElement.style.setProperty('--r', r);
-    document.documentElement.style.setProperty('--g', g);
-    document.documentElement.style.setProperty('--b', b);
-
-    return "r: " + r + " g: " + g + " b: " + b;
-}
-
-function setup_easter_egg() {
-    // disco mode when footer is clicked 3 times
-    var footer_clicks = 0;
-    document.getElementsByClassName("footer")[0].onclick = function() {
-        footer_clicks++;
-        if (footer_clicks == 3) {
-            document.getElementsByClassName("footer")[0].onclick = null;
-            
-            setInterval(function() {
-                shuffle_colors();
-            }, 300);
+        if (!is_reduced_motion && css_enabled) {
+            var current_scroll = document.scrollingElement.scrollTop;
+            var target = document.getElementsByClassName("background")[0];
+            var yvalue = current_scroll * 0.8;
+            target.style.transform = "translate3d(0px, " + yvalue + "px, 0px)";
         }
     }
 }
@@ -71,31 +63,40 @@ function setup_super_unsafe_css() {
     });
 }
 
+
+
 function setup_tile_borders() {
-    document.addEventListener('mousemove', function(e) {
-        if (should_tilt) {
+    // Makes tile borders glow when mouse is close to them
+
+    function draw_glow(e) {
+        if (!is_mobile && !is_reduced_motion && css_enabled) {
             for (let tile of tiles) {
                 let rect = tile.getBoundingClientRect()
                 let x = e.clientX - rect.left
                 let y = e.clientY - rect.top;
-
-               tile.style.background = "radial-gradient(70em circle at " + x + "px " + y + "px, rgba(50, 255, 150, 1), transparent 40%)";
+    
+               tile.style.background = "radial-gradient(100em circle at " + x + "px " + y + "px, rgba(50, 255, 150, 1), transparent 40%)";
             };
         }
-    });
+    }
 
-    document.addEventListener('mouseleave', function(e) {
-        if (should_tilt) {
+    function remove_glow(e) {
+        if (!is_mobile && !is_reduced_motion && css_enabled) {
             for(let tile of tiles) {
-                tile.style.background = "radial-gradient(70em circle at 0px 1000em, rgba(50, 255, 150, 1), transparent 40%)";
+                tile.style.background = "radial-gradient(100em circle at 0px 1000em, rgba(50, 255, 150, 1), transparent 40%)";
             };
         }
-    });
+    }
+
+    document.addEventListener('mousemove', function(e) {draw_glow(e)});
+    document.addEventListener('mouseleave', function(e) {remove_glow(e)});
 }
 
 function setup_tile_tilts() {
-
-    function calculate_tilt(tile, e) { 
+    // Makes tiles tilt when mouse is over them, must be used without css animations
+    
+    function calculate_tilt(tile, e) {
+        // calculate tilt based on mouse position
         const rect = tile.getBoundingClientRect();
         const x_center = rect.left + rect.width / 2;
         const y_center = rect.top + rect.height / 2;
@@ -105,74 +106,93 @@ function setup_tile_tilts() {
 
         var rotate_x = 2 * dy / (rect.height / 2);
         var rotate_y = -2 * dx / (rect.width / 2);
-        tile.style.transition = 'none';
+
         tile.style.transform = `perspective(1000px) rotateX(${rotate_x}deg) rotateY(${rotate_y}deg)`;
     }
 
-    for (var i = 0; i < tiles.length; i++) {
-        let tile = tiles[i];
+    function transition_throttle(tile) {
+        // On mouse enter or leave, we must have an initial smooth transition, then we can remove it
 
-        tile.classList.remove("fly_in");
+        // Remove previous timeout as we are resetting or beginning a new transition
+        clearTimeout(tile.timeout);
+        tile.style.transition = 'transform 1000ms cubic-bezier(0, 1, 0.9, 1)';
 
-        tile.addEventListener('mousemove', function(e) {
-            if (should_tilt) {
-                calculate_tilt(tile, e);
-            }
-        });
-
-        tile.addEventListener('mouseleave', (e) => {
-            tile.style.transition = 'all 1s ease';
-            tile.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-        });
+        // Remove transition after 500ms
+        tile.timeout = setTimeout(function() {
+            tile.style.transition = "";
+        }, 1000);
     }
+
+    function add_event_listeners() {
+        // Add event listeners to all tiles
+
+        for (var i = 0; i < tiles.length; i++) {
+            let tile = tiles[i];
+            
+            // removes initial fly in animation after 1 second
+            tile.classList.remove("fly_in");
+    
+            tile.addEventListener('mousemove', function(e) {
+                if (!is_mobile && !is_reduced_motion && css_enabled) {
+                    calculate_tilt(tile, e);
+                }
+            });
+    
+            tile.addEventListener('mouseleave', (e) => {
+                tile.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+                transition_throttle(tile);
+            });
+
+            tile.addEventListener('mouseenter', (e) => {
+                transition_throttle(tile);
+            });
+        }
+    }
+
+    setTimeout(function(){add_event_listeners()}, 1000);
 }
 
-function calculate_rain_amount() {
-    if (isMobile) {
-        rain_amount *= 0.1;
-        console.log("Mobile detected, spawned only " + rain_amount + " drops");
-    } else if (window.innerWidth < 500) {
-        rain_amount *= 0.1;
-        console.log("Very small screen detected, spawned only " + rain_amount + " drops");
-    } else if (window.innerWidth < 800) {
-        rain_amount *= 0.5;
-        console.log("Small screen detected, spawned only " + rain_amount + " drops");
+function check_resized_and_css() {
+    // If window is resized, update reduced motion and mobile variables
+    window.onresize = function() {
+        is_reduced_motion = window.matchMedia(`(prefers-reduced-motion: reduce)`) === true || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
+        is_mobile = /Mobi|Android/i.test(navigator.userAgent);
     }
+
+    // Check if for some reason css is not loaded (but javascript is?)
+    setInterval(function() {
+        wrapper = document.getElementById("wrapper");
+        style = window.getComputedStyle(wrapper);
+        if (style.getPropertyValue("display") == "block") {
+            if (css_enabled) {
+                console.log("CSS is not loaded? Disabling tilt effect...");
+            }
+            css_enabled = false;
+        } else {
+            if (!css_enabled) {
+                console.log("CSS is loaded? Enabling tilt effect...");
+            }
+            css_enabled = true;
+        }
+    }, 100);
 }
 
 async function main() {
-    
-    if (!isReduced) {
-        calculate_rain_amount();
-        draw_rain();
-        setup_parallax();
-        setup_easter_egg();
-        
-        if (!isMobile) {
-            should_tilt = true;
-            setup_tile_borders();
-            // wait for for initial tile fly in
-            setTimeout(function(){                
-                setup_tile_tilts();
-            }, 1000);
-            
-        }
-
-    }
-
+    // Pixelated background
     setup_super_unsafe_css();
+
+    // Calculating variables
+    check_resized_and_css();
+    
+    // Drawing rain
+    draw_rain();
+    
+    // Setting up parallax
+    setup_parallax();
+    
+    // Special tile effects
+    setup_tile_borders();
+    setup_tile_tilts();
 }
 
 main()
-
-window.onresize = function() {
-    var isReduced = window.matchMedia(`(prefers-reduced-motion: reduce)`) === true || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
-    var isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    if (isReduced || isMobile) {
-        console.log("Resized - should not tilt!");
-        should_tilt = false;
-    } else {
-        console.log("Resized - should tilt!");
-        should_tilt = true;
-    }
-}
