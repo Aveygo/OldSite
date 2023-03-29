@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: aveygo.github.io
+Token: 3b7df65dec0f9232321f426d4feba859c0d005d6cac67ce2852c9421804b92eb
