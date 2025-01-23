@@ -6,4 +6,3 @@ I've decided to retire my old site in preference for my blog. I still like it's 
 
 ^ This should now link to my blog.
 
-![Website image](website_shot.png)
